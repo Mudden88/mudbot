@@ -107,7 +107,7 @@ client.on('interactionCreate', async interaction => {
         modal.addComponents(actionRow);
 
         await interaction.showModal(modal);
-    } else if (interaction.type === InteractionType.ModalSubmit && interaction.customId === 'answerModal') {
+    } else if (interaction.isModalSubmit() && interaction.customId === 'answerModal') { // Ändra till isModalSubmit()
         const userAnswer = interaction.fields.getTextInputValue('answerInput').trim();
 
         if (userAnswer.toLowerCase() === currentQuestion.correctAnswer.toLowerCase()) {

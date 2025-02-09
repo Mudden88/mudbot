@@ -79,20 +79,6 @@ client.on("messageCreate", async (message) => {
             );
 
         message.channel.send({ content: `🎯 **Question:**\n${currentQuestion.question}\n\n${answerOptions}`, components: [row] });
-    } else if (currentQuestion && !answered) {
-        const userAnswer = message.content.trim();
-
-        if (userAnswer.toLowerCase() === currentQuestion.correctAnswer.toLowerCase()) {
-            message.channel.send(`✅ **${message.author.username} Correct Answer!**`);
-            if (!leaderboard[message.author.id]) {
-                leaderboard[message.author.id] = { username: message.author.username, score: 0 };
-            }
-            leaderboard[message.author.id].score += 1;
-            currentQuestion = null; // Återställ frågan
-            answered = true;
-        } else {
-            message.channel.send(`❌ **${message.author.username} Wrong Answer! Try again!**`);
-        }
     }
 });
 
@@ -101,6 +87,30 @@ client.on('interactionCreate', async interaction => {
 
     if (interaction.customId === 'answer') {
         await interaction.reply('Please type your answer in the chat.');
+
+        const filter = response => {
+            return response.author.id === interaction.user.id;
+        };
+
+        interaction.channel.awaitMessages({ filter, max: 1, time: 30000, errors: ['time'] })
+            .then(collected => {
+                const userAnswer = collected.first().content.trim();
+
+                if (userAnswer.toLowerCase() === currentQuestion.correctAnswer.toLowerCase()) {
+                    interaction.followUp(`✅ **${interaction.user.username} Correct Answer!**`);
+                    if (!leaderboard[interaction.user.id]) {
+                        leaderboard[interaction.user.id] = { username: interaction.user.username, score: 0 };
+                    }
+                    leaderboard[interaction.user.id].score += 1;
+                    currentQuestion = null; // Återställ frågan
+                    answered = true;
+                } else {
+                    interaction.followUp(`❌ **${interaction.user.username} Wrong Answer! Try again!**`);
+                }
+            })
+            .catch(collected => {
+                interaction.followUp('❌ You did not answer in time!');
+            });
     }
 });
 

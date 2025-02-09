@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { Client, GatewayIntentBits, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
+const { Client, GatewayIntentBits, ActionRowBuilder, ButtonBuilder, ButtonStyle, ModalBuilder, TextInputBuilder, TextInputStyle, InteractionType } = require("discord.js");
 const axios = require("axios");
 const he = require("he"); 
 
@@ -86,31 +86,33 @@ client.on('interactionCreate', async interaction => {
     if (!interaction.isButton()) return;
 
     if (interaction.customId === 'answer') {
-        await interaction.reply('Please type your answer in the chat.');
+        const modal = new ModalBuilder()
+            .setCustomId('answerModal')
+            .setTitle('Answer the Question');
 
-        const filter = response => {
-            return response.author.id === interaction.user.id;
-        };
+        const answerInput = new TextInputBuilder()
+            .setCustomId('answerInput')
+            .setLabel('Your Answer')
+            .setStyle(TextInputStyle.Short);
 
-        interaction.channel.awaitMessages({ filter, max: 1, time: 30000, errors: ['time'] })
-            .then(collected => {
-                const userAnswer = collected.first().content.trim();
+        const actionRow = new ActionRowBuilder().addComponents(answerInput);
+        modal.addComponents(actionRow);
 
-                if (userAnswer.toLowerCase() === currentQuestion.correctAnswer.toLowerCase()) {
-                    interaction.followUp(`✅ **${interaction.user.username} Correct Answer!**`);
-                    if (!leaderboard[interaction.user.id]) {
-                        leaderboard[interaction.user.id] = { username: interaction.user.username, score: 0 };
-                    }
-                    leaderboard[interaction.user.id].score += 1;
-                    currentQuestion = null; // Återställ frågan
-                    answered = true;
-                } else {
-                    interaction.followUp(`❌ **${interaction.user.username} Wrong Answer! Try again!**`);
-                }
-            })
-            .catch(collected => {
-                interaction.followUp('❌ You did not answer in time!');
-            });
+        await interaction.showModal(modal);
+    } else if (interaction.type === InteractionType.ModalSubmit && interaction.customId === 'answerModal') {
+        const userAnswer = interaction.fields.getTextInputValue('answerInput').trim();
+
+        if (userAnswer.toLowerCase() === currentQuestion.correctAnswer.toLowerCase()) {
+            await interaction.reply(`✅ **${interaction.user.username} Correct Answer!**`);
+            if (!leaderboard[interaction.user.id]) {
+                leaderboard[interaction.user.id] = { username: interaction.user.username, score: 0 };
+            }
+            leaderboard[interaction.user.id].score += 1;
+            currentQuestion = null; // Återställ frågan
+            answered = true;
+        } else {
+            await interaction.reply(`❌ **${interaction.user.username} Wrong Answer! Try again!**`);
+        }
     }
 });
 

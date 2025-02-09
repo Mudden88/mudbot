@@ -1,7 +1,7 @@
 require("dotenv").config();
-const { Client, GatewayIntentBits } = require("discord.js");
+const { Client, GatewayIntentBits, MessageActionRow, MessageButton } = require("discord.js");
 const axios = require("axios");
-const he = require("he"); // För att decoda HTML-entiteter från OpenTDB
+const he = require("he"); 
 
 const client = new Client({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
@@ -70,12 +70,19 @@ client.on("messageCreate", async (message) => {
 
         let answerOptions = currentQuestion.answers.map((answer, index) => `${index + 1}. ${answer}`).join("\n");
 
-        message.channel.send(`🎯 **Question:**\n${currentQuestion.question}\n\n${answerOptions}`);
+        const row = new MessageActionRow()
+            .addComponents(
+                new MessageButton()
+                    .setCustomId('answer')
+                    .setLabel('Answer')
+                    .setStyle('PRIMARY')
+            );
+
+        message.channel.send({ content: `🎯 **Question:**\n${currentQuestion.question}\n\n${answerOptions}`, components: [row] });
     } else if (currentQuestion && !answered) {
         const userAnswer = message.content.trim();
-        const correctIndex = currentQuestion.answers.indexOf(currentQuestion.correctAnswer) + 1;
 
-        if (userAnswer.toLowerCase() === currentQuestion.correctAnswer.toLowerCase() || userAnswer === correctIndex.toString()) {
+        if (userAnswer.toLowerCase() === currentQuestion.correctAnswer.toLowerCase()) {
             message.channel.send(`✅ **${message.author.username} Correct Answer!**`);
             if (!leaderboard[message.author.id]) {
                 leaderboard[message.author.id] = { username: message.author.username, score: 0 };
@@ -86,6 +93,14 @@ client.on("messageCreate", async (message) => {
         } else {
             message.channel.send(`❌ **${message.author.username} Wrong Answer! Try again!**`);
         }
+    }
+});
+
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isButton()) return;
+
+    if (interaction.customId === 'answer') {
+        await interaction.reply('Please type your answer in the chat.');
     }
 });
 

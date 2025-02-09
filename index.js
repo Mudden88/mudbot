@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { Client, GatewayIntentBits, MessageActionRow, MessageButton } = require("discord.js");
+const { Client, GatewayIntentBits, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js");
 const axios = require("axios");
 const he = require("he"); 
 
@@ -54,7 +54,7 @@ client.on("messageCreate", async (message) => {
     }
 
     if (message.content.toLowerCase() === "!quiz") {
-        if (currentQuestion) {
+        if (currentQuestion && !answered) {
             message.channel.send("❌ Answer the active question first!");
             return;
         }
@@ -70,12 +70,12 @@ client.on("messageCreate", async (message) => {
 
         let answerOptions = currentQuestion.answers.map((answer, index) => `${index + 1}. ${answer}`).join("\n");
 
-        const row = new MessageActionRow()
+        const row = new ActionRowBuilder()
             .addComponents(
-                new MessageButton()
+                new ButtonBuilder()
                     .setCustomId('answer')
                     .setLabel('Answer')
-                    .setStyle('PRIMARY')
+                    .setStyle(ButtonStyle.Primary)
             );
 
         message.channel.send({ content: `🎯 **Question:**\n${currentQuestion.question}\n\n${answerOptions}`, components: [row] });

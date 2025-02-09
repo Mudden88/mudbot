@@ -114,7 +114,7 @@ client.on('interactionCreate', async interaction => {
         }
 
         if (userAnswer.toLowerCase() === currentQuestion.correctAnswer.toLowerCase()) {
-            await interaction.reply(`✅ **${interaction.user.username} Correct Answer!**`);
+            await interaction.reply(`✅ **${interaction.user.username} Correct Answer!! [ ${currentQuestion.correctAnswer} ] You got 1 point!**`);
             if (!leaderboard[interaction.user.id]) {
                 leaderboard[interaction.user.id] = { username: interaction.user.username, score: 0 };
             }

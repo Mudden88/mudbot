@@ -52,9 +52,9 @@ client.on("messageCreate", async (message) => {
 
         const sortedScores = Object.values(leaderboard).sort((a, b) => b.score - a.score);
         const topScores = sortedScores.slice(0, 10);
-        const leaderboardText = topScores.map((user, index) => `${index + 1}. ${user.username} - ${user.score} p`).join("\n");
+        const leaderboardText = topScores.map((user, index) => `**${index + 1}. ${user.username} - ${user.score}** p`).join("\n");
 
-        message.channel.send(`🏆 **Leaderboard:**\n${leaderboardText}`);
+        message.channel.send(`🏆 # **Quiz Top 10 Leaderbaord:**\n${leaderboardText}`);
     }
 
     if (message.content.toLowerCase() === "!quiz") {

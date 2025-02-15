@@ -16,7 +16,7 @@ Follow these steps to install and run MudBot:
 
 1. Clone this repository:
     ```bash
-    git clone https://github.com/your-username/MudBot.git
+    git clone https://github.com/Mudden88/MudBot.git
     ```
 
 2. Navigate to the project directory:
@@ -36,7 +36,7 @@ Follow these steps to install and run MudBot:
 
 5. Start the bot:
     ```bash
-    node [index.js](http://_vscodecontentref_/2)
+    node index.js
     ```
 
 ## Contributing

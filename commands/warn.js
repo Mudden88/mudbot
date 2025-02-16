@@ -82,29 +82,29 @@ module.exports = {
 
             await saveWarnings(); 
 
-            return interaction.reply({ content: `⚠️ **${target.tag}** has been warned for: "${reason}"`, ephemeral: true });
+            return interaction.reply({ content: `⚠️ **${target.tag}** has been warned for: "${reason}"`, ephemeral: false });
 
         } else if (subcommand === 'check') {
             if (warnings[guildId][target.id].length === 0) {
-                return interaction.reply({ content: `✅ **${target.tag}** has no warnings.`, ephemeral: true });
+                return interaction.reply({ content: `✅ **${target.tag}** has no warnings.`, ephemeral: false });
             }
 
             const userWarnings = warnings[guildId][target.id]
                 .map((warn, index) => `**${index + 1}.** ${warn.reason} *(Date: ${warn.date})*`)
                 .join("\n");
 
-            return interaction.reply({ content: `📌 Warnings for **${target.tag}**:\n${userWarnings}`, ephemeral: true });
+            return interaction.reply({ content: `📌 Warnings for **${target.tag}**:\n${userWarnings}`, ephemeral: false });
 
         } else if (subcommand === 'remove') {
             if (!warnings[guildId][target.id] || warnings[guildId][target.id].length === 0) {
-                return interaction.reply({ content: `🚫 **${target.tag}** has no warnings to remove.`, ephemeral: true });
+                return interaction.reply({ content: `🚫 **${target.tag}** has no warnings to remove.`, ephemeral: false });
             }
 
             delete warnings[guildId][target.id];
 
             await saveWarnings();
 
-            return interaction.reply({ content: `✅ Cleared all warnings for **${target.tag}**.`, ephemeral: true });
+            return interaction.reply({ content: `✅ Cleared all warnings for **${target.tag}**.`, ephemeral: false });
         }
     }
 };

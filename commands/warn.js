@@ -1,5 +1,4 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const { PermissionFlagsBits } = require('discord.js');
+const { PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
 const fs = require('fs').promises; 
 
 const WARNING_FILE_PATH = './warning.json';
@@ -13,7 +12,7 @@ async function loadWarnings() {
         warnings = JSON.parse(data);
     } catch (error) {
         console.error("Error loading warnings:", error);
-        warnings = {}; // Reset if file is corrupted
+        warnings = {}; // Reset if file is corrupted or empty
     }
 }
 

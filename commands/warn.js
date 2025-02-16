@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits } = require('@discordjs/builders');
+const { SlashCommandBuilder, PermissionFlagsBits } = require('@discordjs');
 const fs = require('fs').promises; 
 
 const WARNING_FILE_PATH = './warning.json';

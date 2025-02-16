@@ -4,6 +4,12 @@ MudBot is a Discord QuizBot that uses OpenTriviaDB to fetch questions. It is bui
 
 ## Available Commands
 
+### `/warn`
+- `/warn add` Warns a user and stores the warning.
+- `/warn check` Check if user is warned
+- `/warn remove` Remove all warnings for a user
+
+
 ### `!quiz`
 Starts a quiz and sends a question to the channel. Users can answer the question by clicking the "Answer" button and entering their answer in a modal.
 

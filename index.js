@@ -1,6 +1,6 @@
 const client = require("./client/client.js");
-const registerFunctions = require("./functions/functions.js");
+const getFunctions = require("./functions/functions.js");
 
-registerFunctions(client);
+getFunctions(client);
 
 client.login(process.env.TOKEN);

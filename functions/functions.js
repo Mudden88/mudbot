@@ -1,17 +1,18 @@
 const { fetchQuestion } = require("../quiz/quiz.js");
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, ModalBuilder, TextInputBuilder, TextInputStyle, InteractionType } = require("discord.js");
 
+
 let currentQuestion = null;
 let answered = false;
 let leaderboard = {};
 
-function registerFunctions(client) {
+function getFunctions(client) {
     client.on("messageCreate", async (message) => {
         if (message.author.bot) return;
 
         if (message.content.toLowerCase() === "!leaderboard") {
             if (Object.keys(leaderboard).length === 0) {
-                message.channel.send("🏆 **Leaderboard:** Inga poäng ännu! Börja spela med `!quiz`.");
+                message.channel.send("🏆 **Leaderboard:** No points yet! Start playing with `!quiz`.");
                 return;
             }
 
@@ -69,15 +70,15 @@ function registerFunctions(client) {
 
             await interaction.showModal(modal);
         } 
-
+// Handle the answer modal
         if (interaction.type === InteractionType.ModalSubmit && interaction.customId === 'answerModal') {
             const userAnswer = interaction.fields.getTextInputValue('answerInput').trim();
-
+// Check if there is an active question
             if (!currentQuestion) {
                 await interaction.reply("❌ No active question. Start a new quiz with `!quiz`.");
                 return;
             }
-
+// Answer the question
             if (userAnswer.toLowerCase() === currentQuestion.correctAnswer.toLowerCase()) {
                 await interaction.reply(`✅ **${interaction.user.username} Correct Answer!! [ ${currentQuestion.correctAnswer} ] You got 1 point!**`);
                 if (!leaderboard[interaction.user.id]) {
@@ -105,4 +106,4 @@ function registerFunctions(client) {
     });
 }
 
-module.exports = registerFunctions;
+module.exports = getFunctions;

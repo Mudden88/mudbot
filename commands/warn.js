@@ -65,7 +65,7 @@ module.exports = {
                         .setRequired(true)))
         .addSubcommand(subcommand =>
             subcommand
-                .setName('listAll')
+                .setName('list')
                 .setDescription("List all warnings for the guild."))
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
 

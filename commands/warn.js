@@ -34,7 +34,7 @@ loadWarnings();
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('warn')
-        .setDescription('Warn a user, check their warnings, or remove a warning.')
+        .setDescription('Warn a user, check their warnings, remove a warning, or list all warnings for the guild.')
         .addSubcommand(subcommand =>
             subcommand
                 .setName('add')
@@ -78,7 +78,7 @@ module.exports = {
         // Ensure the guild exists
         if (!warnings[guildId]) warnings[guildId] = {};
         // Ensure the user exists in the guild
-        if (!warnings[guildId][target.id]) warnings[guildId][target.id] = [];
+        if (target && !warnings[guildId][target.id]) warnings[guildId][target.id] = [];
 
         if (subcommand === 'add') {
             const reason = interaction.options.getString("reason") || "No reason provided";
@@ -112,8 +112,9 @@ module.exports = {
             delete warnings[guildId][target.id];
 
             await saveWarnings();
+
             return interaction.reply({ content: `✅ Cleared all warnings for **${target.tag}**.`, ephemeral: false });
-        
+
         } else if (subcommand === 'list') {
             const guildWarnings = warnings[guildId];
             if (Object.keys(guildWarnings).length === 0) {

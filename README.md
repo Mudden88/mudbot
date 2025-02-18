@@ -40,6 +40,11 @@ Follow these steps to install and run MudBot:
     TOKEN=your-discord-bot-token
     ```
 
+5. Create a `warning.json` file with 
+    ```
+    {}
+    ```
+
 5. Start the bot:
     ```bash
     node index.js

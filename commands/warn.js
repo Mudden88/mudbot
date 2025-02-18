@@ -1,7 +1,8 @@
 const { PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
-const fs = require('fs').promises; 
+const fs = require('fs').promises;
+const path = require('path');
 
-const WARNING_FILE_PATH = './warning.json';
+const WARNING_FILE_PATH = path.join(__dirname, 'warning.json');
 
 let warnings = {};
 
@@ -10,6 +11,7 @@ async function loadWarnings() {
     try {
         const data = await fs.readFile(WARNING_FILE_PATH, 'utf8');
         warnings = JSON.parse(data);
+        console.log("Warnings loaded successfully.");
     } catch (error) {
         console.error("Error loading warnings:", error);
         warnings = {}; // Reset if file is corrupted or empty
@@ -20,6 +22,7 @@ async function loadWarnings() {
 async function saveWarnings() {
     try {
         await fs.writeFile(WARNING_FILE_PATH, JSON.stringify(warnings, null, 4));
+        console.log("Warnings saved successfully.");
     } catch (error) {
         console.error("Error saving warnings:", error);
     }
@@ -80,7 +83,7 @@ module.exports = {
                 date: new Date().toISOString(),
             });
 
-            await saveWarnings(); 
+            await saveWarnings();
 
             return interaction.reply({ content: `⚠️ **${target.tag}** has been warned for: "${reason}"`, ephemeral: false });
 

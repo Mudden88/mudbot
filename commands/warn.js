@@ -63,11 +63,16 @@ module.exports = {
                     option.setName("target")
                         .setDescription("The user to remove warnings from")
                         .setRequired(true)))
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('listAll')
+                .setDescription("List all warnings for the guild."))
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
 
     async execute(interaction) {
         const subcommand = interaction.options.getSubcommand();
         const target = interaction.options.getUser("target");
+        const userName = target ? target.tag : null;
         const guildId = interaction.guild.id;
 
         // Ensure the guild exists
@@ -79,6 +84,7 @@ module.exports = {
             const reason = interaction.options.getString("reason") || "No reason provided";
 
             warnings[guildId][target.id].push({
+                username: userName,
                 reason: reason,
                 date: new Date().toISOString(),
             });
@@ -106,8 +112,23 @@ module.exports = {
             delete warnings[guildId][target.id];
 
             await saveWarnings();
-
             return interaction.reply({ content: `✅ Cleared all warnings for **${target.tag}**.`, ephemeral: false });
+        
+        } else if (subcommand === 'list') {
+            const guildWarnings = warnings[guildId];
+            if (Object.keys(guildWarnings).length === 0) {
+                return interaction.reply({ content: `✅ No warnings in this guild.`, ephemeral: false });
+            }
+
+            let allWarnings = [];
+            for (const userId in guildWarnings) {
+                const userWarnings = guildWarnings[userId]
+                    .map((warn, index) => `**${index + 1}.** ${warn.reason} *(Date: ${warn.date}, User: ${warn.username})*`)
+                    .join("\n");
+                allWarnings.push(`📌 Warnings for <@${userId}>:\n${userWarnings}`);
+            }
+
+            return interaction.reply({ content: allWarnings.join("\n\n"), ephemeral: false });
         }
     }
 };

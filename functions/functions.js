@@ -86,14 +86,6 @@ function getFunctions(client) {
           );
           currentQuestion = null;
           answered = true;
-          const disabledRow = new ActionRowBuilder().addComponents(
-            new ButtonBuilder()
-              .setCustomId("answer")
-              .setLabel("Answer")
-              .setStyle(ButtonStyle.Primary)
-              .setDisabled(true)
-          );
-          await interaction.message.edit({ components: [disabledRow] });
         }
       }, 300000);
     }

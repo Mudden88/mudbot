@@ -79,13 +79,21 @@ function getFunctions(client) {
       });
 
       // Set a 5-minute timeout to reveal the answer if not answered
-      questionTimeout = setTimeout(() => {
+      questionTimeout = setTimeout(async () => {
         if (currentQuestion && !answered) {
           message.channel.send(
             `⏰ Time's up! The correct answer was: **${currentQuestion.correctAnswer}**`
           );
           currentQuestion = null;
           answered = true;
+          const disabledRow = new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+              .setCustomId("answer")
+              .setLabel("Answer")
+              .setStyle(ButtonStyle.Primary)
+              .setDisabled(true)
+          );
+          await interaction.message.edit({ components: [disabledRow] });
         }
       }, 300000);
     }
